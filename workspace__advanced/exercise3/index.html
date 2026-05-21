@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Globe — Google 3D Tiles</title>
+  <link rel="stylesheet" href="src/style.css"/>
+</head>
+<body>
+
+  <!-- Globe container -->
+  <div id="globe"></div>
+  <div id="cesium-credit"></div>
+
+  <!-- Google Maps 2D (weather mode) -->
+  <div id="google-map" class="hidden"></div>
+
+  <!-- Loading overlay -->
+  <div id="loading">
+    <div class="loader"></div>
+    <span>Loading Globe...</span>
+  </div>
+
+  <!-- Location pills -->
+  <nav id="locations">
+    <button onclick="goTo(24.7136, 46.6753, 15)">Riyadh</button>
+    <button onclick="goTo(51.505, -0.09, 13)">London</button>
+    <button onclick="goTo(40.7128, -74.006, 13)">New York</button>
+    <button onclick="goTo(35.6762, 139.6503, 13)">Tokyo</button>
+    <button onclick="goTo(25.2048, 55.2708, 14)">Dubai</button>
+  </nav>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sb-section">
+      <button class="layer-btn" data-layer="flights">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+        Flights
+      </button>
+
+      <button class="layer-btn" data-layer="weather">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10H6A4 4 0 1 0 6 18H18A3 3 0 1 0 18 10Z"/><path d="M8 10A5 5 0 1 1 17.5 10"/></svg>
+        Weather
+      </button>
+
+      <div id="weather-sub" class="sub-options hidden">
+        <button class="sub-btn" data-weather="clouds_new">Clouds</button>
+        <button class="sub-btn" data-weather="precipitation_new">Rain</button>
+        <button class="sub-btn" data-weather="temp_new">Temperature</button>
+        <button class="sub-btn" data-weather="wind_new">Wind</button>
+        <button class="sub-btn" data-weather="pressure_new">Pressure</button>
+      </div>
+
+      <button class="layer-btn" data-layer="satellite">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="2" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="22"/></svg>
+        Satellites
+      </button>
+      <div id="sat-sub" class="sub-options hidden">
+        <select id="satCategory" class="sub-select" onchange="changeSatCategory(this.value)">
+          <option value="1">Brightest</option>
+          <option value="2">ISS</option>
+          <option value="20">GPS</option>
+          <option value="52" selected>Starlink</option>
+          <option value="3">Weather Sats</option>
+        </select>
+      </div>
+
+      <button class="layer-btn" data-layer="cameras">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Cameras
+      </button>
+    </div>
+
+    <div id="layer-status" class="sb-status">No layer active</div>
+  </aside>
+
+  <!-- Satellite info card -->
+  <div id="sat-info" class="info-card hidden">
+    <div class="card-header">
+      <div>
+        <span id="si-name" class="card-title">--</span>
+        <span id="si-id"   class="card-subtitle">--</span>
+      </div>
+      <button class="card-close" onclick="closeSat()">&times;</button>
+    </div>
+    <div class="card-grid">
+      <div class="card-stat"><span>Altitude</span><b id="si-alt">--</b></div>
+      <div class="card-stat"><span>Latitude</span><b id="si-lat">--</b></div>
+      <div class="card-stat"><span>Longitude</span><b id="si-lon">--</b></div>
+      <div class="card-stat"><span>Int'l Desig.</span><b id="si-int">--</b></div>
+      <div class="card-stat full"><span>Launch Date</span><b id="si-launch">--</b></div>
+      <div class="card-stat full"><span>Track on N2YO</span><b id="si-link">--</b></div>
+    </div>
+  </div>
+
+  <!-- Flight info card -->
+  <div id="flight-info" class="info-card hidden">
+    <div class="card-header">
+      <div>
+        <span id="fi-cs" class="card-title">--</span>
+        <span id="fi-country" class="card-subtitle">--</span>
+      </div>
+      <button class="card-close" onclick="closeFlight()">&times;</button>
+    </div>
+
+    <div id="fi-route" class="card-route hidden">
+      <div class="route-airports">
+        <div class="route-ap dep">
+          <b id="fi-dep-icao">--</b>
+          <small id="fi-dep-name">--</small>
+        </div>
+        <span id="fi-prog-pct" class="route-pct">--</span>
+        <div class="route-ap arr">
+          <b id="fi-arr-icao">--</b>
+          <small id="fi-arr-name">--</small>
+        </div>
+      </div>
+      <div class="route-track">
+        <div id="fi-prog-fill" class="route-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div id="fi-no-route" class="card-no-route hidden">Route data unavailable</div>
+
+    <div class="card-grid">
+      <div class="card-stat"><span>Altitude</span><b id="fi-alt">--</b></div>
+      <div class="card-stat"><span>Speed</span><b id="fi-spd">--</b></div>
+      <div class="card-stat"><span>Heading</span><b id="fi-hdg">--</b></div>
+      <div class="card-stat"><span>V/S</span><b id="fi-vr">--</b></div>
+      <div class="card-stat full"><span>ICAO24</span><b id="fi-icao">--</b></div>
+    </div>
+  </div>
+
+  <!-- Weather click card -->
+  <div id="weather-card" class="weather-card hidden">
+    <div class="card-header">
+      <div>
+        <span id="wc-location" class="card-title">--</span>
+        <span id="wc-coords" class="card-subtitle">--</span>
+      </div>
+      <button class="card-close" onclick="closeWeatherCard()">&times;</button>
+    </div>
+    <div id="wc-icon-row" class="wc-icon-row">
+      <img id="wc-icon" src="" alt="" width="50" height="50"/>
+      <div>
+        <b id="wc-temp" class="wc-temp">--</b>
+        <span id="wc-desc" class="wc-desc">--</span>
+      </div>
+    </div>
+    <div class="card-grid">
+      <div class="card-stat"><span>Feels Like</span><b id="wc-feels">--</b></div>
+      <div class="card-stat"><span>Humidity</span><b id="wc-humid">--</b></div>
+      <div class="card-stat"><span>Wind</span><b id="wc-wind">--</b></div>
+      <div class="card-stat"><span>Pressure</span><b id="wc-press">--</b></div>
+      <div class="card-stat"><span>Clouds</span><b id="wc-clouds">--</b></div>
+      <div class="card-stat"><span>Visibility</span><b id="wc-vis">--</b></div>
+    </div>
+  </div>
+
+  <!-- Zoom controls -->
+  <div id="zoom-controls">
+    <button onclick="zoomIn()">+</button>
+    <button onclick="zoomOut()">&minus;</button>
+  </div>
+
+  <script src="src/main.js"></script>
+</body>
+</html>

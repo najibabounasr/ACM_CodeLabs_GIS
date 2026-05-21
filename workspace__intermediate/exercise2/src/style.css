@@ -1,0 +1,297 @@
+:root {
+  --glass: rgba(28, 28, 32, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: blur(24px);
+  --text: #e8e8ec;
+  --text-soft: #a0a0a8;
+  --text-dim: #68686f;
+  --accent: #ff6b35;
+  --accent-soft: rgba(255, 107, 53, 0.15);
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%; width: 100%;
+  font-family: -apple-system, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+  background: #111;
+  color: var(--text);
+  overflow: hidden;
+}
+
+/* ── Google Maps 2D ── */
+#google-map {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/* ── Loading ── */
+#loading {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: #111;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  transition: opacity 0.5s;
+}
+#loading.done { opacity: 0; pointer-events: none; }
+
+.loader {
+  width: 32px; height: 32px;
+  border: 3px solid rgba(255,255,255,0.1);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Location pills ── */
+#locations {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  gap: 6px;
+  background: var(--glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: 40px;
+  padding: 5px 6px;
+}
+
+#locations button {
+  background: transparent;
+  border: none;
+  color: var(--text-soft);
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.01em;
+}
+#locations button:hover {
+  background: rgba(255,255,255,0.1);
+  color: var(--text);
+}
+
+/* ── Sidebar ── */
+#sidebar {
+  position: fixed;
+  top: 72px;
+  left: 16px;
+  z-index: 1000;
+  width: 200px;
+  background: var(--glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sb-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.layer-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+.layer-btn svg {
+  flex-shrink: 0;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+.layer-btn:hover {
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+}
+.layer-btn:hover svg { opacity: 0.9; }
+
+.layer-btn.active {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+.layer-btn.active svg { opacity: 1; }
+
+/* Weather sub-options */
+.sub-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 2px 0 2px 28px;
+  overflow: hidden;
+  max-height: 200px;
+  transition: max-height 0.25s ease, opacity 0.2s;
+}
+.sub-options.hidden {
+  max-height: 0;
+  opacity: 0;
+  padding: 0 0 0 28px;
+}
+
+.sub-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 0.76rem;
+  padding: 7px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+}
+.sub-btn:hover {
+  background: rgba(255,255,255,0.06);
+  color: var(--text-soft);
+}
+.sub-btn.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Status bar */
+.sb-status {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  text-align: center;
+  padding: 8px 0 4px;
+  border-top: 1px solid var(--glass-border);
+  margin-top: 4px;
+  letter-spacing: 0.02em;
+}
+
+/* ── Weather click card ── */
+.weather-card {
+  position: fixed;
+  bottom: 36px;
+  right: 70px;
+  z-index: 1001;
+  width: 260px;
+  background: var(--glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  transition: opacity 0.2s, transform 0.2s;
+}
+.weather-card.hidden { display: none; }
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  display: block;
+}
+.card-subtitle {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+}
+.card-close {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.15s;
+}
+.card-close:hover { color: var(--text); }
+
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
+}
+.card-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.card-stat span {
+  font-size: 0.62rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.card-stat b {
+  font-size: 0.82rem;
+  color: var(--text);
+  font-weight: 600;
+}
+.card-stat.full { grid-column: 1 / -1; }
+
+.wc-icon-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--glass-border);
+}
+.wc-icon-row img {
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+}
+.wc-temp {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text);
+  display: block;
+  line-height: 1.1;
+}
+.wc-desc {
+  font-size: 0.76rem;
+  color: var(--text-soft);
+  text-transform: capitalize;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  #sidebar { width: 170px; left: 8px; top: 64px; }
+  #locations { gap: 3px; padding: 4px 5px; }
+  #locations button { font-size: 0.7rem; padding: 5px 10px; }
+}

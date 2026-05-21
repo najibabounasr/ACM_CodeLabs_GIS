@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather Maps</title>
+  <link rel="stylesheet" href="src/style.css"/>
+</head>
+<body>
+
+  <!-- Google Maps 2D (weather mode) -->
+  <div id="google-map"></div>
+
+  <!-- Loading overlay -->
+  <div id="loading">
+    <div class="loader"></div>
+    <span>Loading Weather Maps...</span>
+  </div>
+
+  <!-- Location pills -->
+  <nav id="locations">
+    <button onclick="goTo(24.7136, 46.6753)">Riyadh</button>
+    <button onclick="goTo(51.505, -0.09)">London</button>
+    <button onclick="goTo(40.7128, -74.006)">New York</button>
+    <button onclick="goTo(35.6762, 139.6503)">Tokyo</button>
+    <button onclick="goTo(25.2048, 55.2708)">Dubai</button>
+  </nav>
+
+  <!-- Sidebar -->
+  <aside id="sidebar">
+    <div class="sb-section">
+      <button class="layer-btn" data-layer="weather">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10H6A4 4 0 1 0 6 18H18A3 3 0 1 0 18 10Z"/><path d="M8 10A5 5 0 1 1 17.5 10"/></svg>
+        Weather
+      </button>
+
+      <div id="weather-sub" class="sub-options hidden">
+        <button class="sub-btn" data-weather="clouds_new">Clouds</button>
+        <button class="sub-btn" data-weather="precipitation_new">Rain</button>
+        <button class="sub-btn" data-weather="temp_new">Temperature</button>
+        <button class="sub-btn" data-weather="wind_new">Wind</button>
+        <button class="sub-btn" data-weather="pressure_new">Pressure</button>
+      </div>
+    </div>
+
+    <div id="layer-status" class="sb-status">Pick a weather layer</div>
+  </aside>
+
+  <!-- Weather click card -->
+  <div id="weather-card" class="weather-card hidden">
+    <div class="card-header">
+      <div>
+        <span id="wc-location" class="card-title">--</span>
+        <span id="wc-coords" class="card-subtitle">--</span>
+      </div>
+      <button class="card-close" onclick="closeWeatherCard()">&times;</button>
+    </div>
+    <div id="wc-icon-row" class="wc-icon-row">
+      <img id="wc-icon" src="" alt="" width="50" height="50"/>
+      <div>
+        <b id="wc-temp" class="wc-temp">--</b>
+        <span id="wc-desc" class="wc-desc">--</span>
+      </div>
+    </div>
+    <div class="card-grid">
+      <div class="card-stat"><span>Feels Like</span><b id="wc-feels">--</b></div>
+      <div class="card-stat"><span>Humidity</span><b id="wc-humid">--</b></div>
+      <div class="card-stat"><span>Wind</span><b id="wc-wind">--</b></div>
+      <div class="card-stat"><span>Pressure</span><b id="wc-press">--</b></div>
+      <div class="card-stat"><span>Clouds</span><b id="wc-clouds">--</b></div>
+      <div class="card-stat"><span>Visibility</span><b id="wc-vis">--</b></div>
+    </div>
+  </div>
+
+  <script src="src/main.js"></script>
+</body>
+</html>

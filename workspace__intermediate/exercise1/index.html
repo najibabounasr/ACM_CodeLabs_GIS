@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Base Maps — 2D · 3D · Globe · Google Tiles</title>
+  <link rel="stylesheet" href="/node_modules/leaflet/dist/leaflet.css"/>
+  <link rel="stylesheet" href="/node_modules/maplibre-gl/dist/maplibre-gl.css"/>
+  <link rel="stylesheet" href="src/style.css"/>
+</head>
+<body>
+
+  <header>
+    <div class="tabs">
+      <button class="tab active" data-tab="2d"     onclick="showTab('2d')">2D Map</button>
+      <button class="tab"        data-tab="3d"     onclick="showTab('3d')">3D City</button>
+      <button class="tab"        data-tab="globe"  onclick="showTab('globe')">Globe</button>
+      <button class="tab"        data-tab="google" onclick="showTab('google')">Google Tiles</button>
+    </div>
+    <div class="locations">
+      <button onclick="goTo(24.7136,  46.6753, 15)">Riyadh</button>
+      <button onclick="goTo(51.505,   -0.09,   13)">London</button>
+      <button onclick="goTo(40.7128, -74.006,  13)">New York</button>
+      <button onclick="goTo(35.6762, 139.6503, 13)">Tokyo</button>
+      <button onclick="goTo(25.2048,  55.2708, 14)">Dubai</button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ── 2D panel ── -->
+    <div class="panel active" id="panel-2d">
+      <div class="badge">2D · Leaflet · OpenStreetMap</div>
+      <div id="map2d"></div>
+    </div>
+
+    <!-- ── 3D City panel ── -->
+    <div class="panel" id="panel-3d">
+      <div class="badge">3D City · MapLibre GL · OpenStreetMap</div>
+      <div id="map3d"></div>
+      <aside id="controls3d">
+        <p class="ctrl-title">3D Controls</p>
+        <label class="ctrl-row">
+          Pitch <span id="pitchVal">65°</span>
+          <input type="range" id="pitchSlider" min="0" max="85" step="1" value="65"
+                 oninput="setPitch(this.value)"/>
+        </label>
+        <label class="ctrl-row">
+          Terrain <span id="terrainVal">1.5×</span>
+          <input type="range" id="terrainSlider" min="0" max="5" step="0.1" value="1.5"
+                 oninput="setTerrain(this.value)"/>
+        </label>
+        <div class="ctrl-toggle">
+          <span>3D Buildings</span>
+          <label class="toggle">
+            <input type="checkbox" id="buildingsToggle" checked onchange="toggleBuildings()"/>
+            <span class="knob"></span>
+          </label>
+        </div>
+      </aside>
+    </div>
+
+    <!-- ── Globe panel (CesiumJS) ── -->
+    <div class="panel" id="panel-globe">
+      <div class="badge">Globe · CesiumJS · OpenStreetMap</div>
+      <div id="mapGlobe">
+        <div id="cesium-loading">
+          <div class="spinner"></div>
+          <span>Loading CesiumJS…</span>
+        </div>
+      </div>
+      <div id="cesium-credit"></div>
+
+      <aside id="controlsGlobe">
+        <div class="ctrl-toggle">
+          <span>Auto-rotate</span>
+          <label class="toggle">
+            <input type="checkbox" id="rotateToggle" checked onchange="toggleRotate()"/>
+            <span class="knob"></span>
+          </label>
+        </div>
+      </aside>
+    </div>
+
+    <!-- ── Google Tiles panel ── -->
+    <div class="panel" id="panel-google">
+      <div class="badge">Globe · CesiumJS · Google 3D Tiles</div>
+      <div id="mapGoogle">
+        <div id="google-loading">
+          <div class="spinner"></div>
+          <span>Loading Google Tiles…</span>
+        </div>
+      </div>
+      <div id="google-credit"></div>
+
+      <aside id="controlsGoogle">
+        <div class="ctrl-toggle">
+          <span>Auto-rotate</span>
+          <label class="toggle">
+            <input type="checkbox" id="rotateGoogleToggle" checked onchange="toggleRotateGoogle()"/>
+            <span class="knob"></span>
+          </label>
+        </div>
+      </aside>
+    </div>
+
+  </main>
+
+  <script src="/node_modules/leaflet/dist/leaflet.js"></script>
+  <script src="/node_modules/maplibre-gl/dist/maplibre-gl.js"></script>
+  <script src="src/main.js"></script>
+</body>
+</html>
