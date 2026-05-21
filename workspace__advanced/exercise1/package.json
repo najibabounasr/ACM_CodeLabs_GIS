@@ -1,0 +1,15 @@
+{
+  "name": "advanced-exercise1",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cesium": "^1.140.0",
+    "compression": "^1.8.1",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "leaflet": "^1.9.4",
+    "maplibre-gl": "^5.23.0"
+  }
+}

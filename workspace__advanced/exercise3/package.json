@@ -1,0 +1,14 @@
+{
+  "name": "advanced-exercise3",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cesium": "^1.140.0",
+    "compression": "^1.8.1",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "pngjs": "^7.0.0"
+  }
+}
